@@ -12,7 +12,7 @@ public class DBConnection {
     private static final String USER = "postgres";
 
     // Change this to YOUR PostgreSQL password
-    private static final String PASSWORD = "postgres";
+    private static final String PASSWORD = "AdolfJ";
 
     public static Connection getConnection() {
 
