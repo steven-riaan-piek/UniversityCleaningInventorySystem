@@ -66,7 +66,8 @@ public class CleanerForm extends JFrame {
         JPanel buttons = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton btnAdd = new JButton("Add"); JButton btnUpdate = new JButton("Update");
         JButton btnDelete = new JButton("Delete"); JButton btnClear = new JButton("Clear");
-        buttons.add(btnAdd); buttons.add(btnUpdate); buttons.add(btnDelete); buttons.add(btnClear);
+        JButton btnBack = new JButton("Back");
+        buttons.add(btnAdd); buttons.add(btnUpdate); buttons.add(btnDelete); buttons.add(btnClear); buttons.add(btnBack);
         c.gridx = 0; c.gridy = 5; c.gridwidth = 2; c.weightx = 1; form.add(buttons, c);
 
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); table.setAutoCreateRowSorter(true);
@@ -76,6 +77,7 @@ public class CleanerForm extends JFrame {
 
         btnAdd.addActionListener(e -> addCleaner()); btnUpdate.addActionListener(e -> updateCleaner());
         btnDelete.addActionListener(e -> deleteCleaner()); btnClear.addActionListener(e -> clearForm());
+        btnBack.addActionListener(e -> dispose());
         btnSearch.addActionListener(e -> loadCleaners(txtSearch.getText()));
         btnShowAll.addActionListener(e -> { txtSearch.setText(""); loadCleaners(""); });
         txtSearch.addActionListener(e -> loadCleaners(txtSearch.getText()));

@@ -79,7 +79,8 @@ public class SupplierForm extends JFrame {
         JButton btnUpdate = new JButton("Update");
         JButton btnDelete = new JButton("Delete");
         JButton btnClear = new JButton("Clear");
-        buttons.add(btnAdd); buttons.add(btnUpdate); buttons.add(btnDelete); buttons.add(btnClear);
+        JButton btnBack = new JButton("Back");
+        buttons.add(btnAdd); buttons.add(btnUpdate); buttons.add(btnDelete); buttons.add(btnClear); buttons.add(btnBack);
         c.gridx = 0; c.gridy = 5; c.gridwidth = 2; c.weightx = 1;
         form.add(buttons, c);
 
@@ -98,6 +99,7 @@ public class SupplierForm extends JFrame {
         btnUpdate.addActionListener(e -> updateSupplier());
         btnDelete.addActionListener(e -> deleteSupplier());
         btnClear.addActionListener(e -> clearForm());
+        btnBack.addActionListener(e -> dispose());
         btnSearch.addActionListener(e -> loadSuppliers(txtSearch.getText()));
         btnShowAll.addActionListener(e -> { txtSearch.setText(""); loadSuppliers(""); });
         txtSearch.addActionListener(e -> loadSuppliers(txtSearch.getText()));

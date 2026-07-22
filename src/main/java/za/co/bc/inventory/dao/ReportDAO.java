@@ -1,55 +1,38 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package za.co.bc.inventory.dao;
 
-/**
- *
- * @author Jt
- */
 import za.co.bc.inventory.database.DBConnection;
+
+import javax.swing.table.DefaultTableModel;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
-import javax.swing.table.DefaultTableModel;
 
 public class ReportDAO {
 
-    public int getTotalCount(String tableName) {
-        int count = 0;
-        String query = "SELECT COUNT(*) FROM " + tableName;
-        
+    public int getTotalMaterialsCount() {
+        return getCount("SELECT COUNT(*) FROM material");
+    }
+
+    public int getTotalCleanersCount() {
+        return getCount("SELECT COUNT(*) FROM cleaners");
+    }
+
+    private int getCount(String query) {
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
-             
-            if (rs.next()) {
-                count = rs.getInt(1);
-            }
+            return rs.next() ? rs.getInt(1) : 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return 0;
         }
-        return count;
     }
 
     public int getLowStockItemsCount() {
-        int count = 0;
-        String query = "SELECT COUNT(*) FROM Materials WHERE quantity_available <= reorder_level";
-        
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-             
-            if (rs.next()) {
-                count = rs.getInt(1);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return count;
+        String query = "SELECT COUNT(*) FROM material WHERE quantity <= reorder_level";
+        return getCount(query);
     }
 
     public DefaultTableModel getRecentIssuancesModel() {
@@ -60,13 +43,18 @@ public class ReportDAO {
         columnNames.add("Date");
 
         Vector<Vector<Object>> data = new Vector<>();
-        
-        // JOIN query to get human-readable names instead of IDs
-        String query = "SELECT m.name AS material_name, c.first_name || ' ' || c.last_name AS cleaner_name, s.quantity, s.issue_date " +
-                       "FROM StockIssuance s " +
-                       "JOIN Materials m ON s.material_id = m.material_id " +
-                       "JOIN Cleaners c ON s.cleaner_id = c.cleaner_id " +
-                       "ORDER BY s.issue_date DESC LIMIT 10";
+
+        String query = """
+                SELECT m.name AS material_name,
+                       c.full_name AS cleaner_name,
+                       s.quantity,
+                       s.issue_date
+                FROM stock_issuance s
+                JOIN material m ON s.material_id = m.id
+                JOIN cleaners c ON s.cleaner_id = c.id
+                ORDER BY s.issue_date DESC
+                LIMIT 10
+                """;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query);
@@ -83,6 +71,12 @@ public class ReportDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return new DefaultTableModel(data, columnNames);
+
+        return new DefaultTableModel(data, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
     }
 }
