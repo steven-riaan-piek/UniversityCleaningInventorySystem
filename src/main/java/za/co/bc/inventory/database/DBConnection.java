@@ -7,12 +7,12 @@ import java.sql.SQLException;
 public class DBConnection {
 
     private static final String URL =
-            "jdbc:postgresql://localhost:5432/cleaning_inventory_db";
+            "jdbc:postgresql://localhost:5432/postgres";
 
     private static final String USER = "postgres";
 
     // Change this to YOUR PostgreSQL password
-    private static final String PASSWORD = "AdolfJ";
+    private static final String PASSWORD = "postgres";
 
     public static Connection getConnection() {
 

@@ -21,26 +21,36 @@ public class StockIssueForm extends javax.swing.JFrame {
     }
 
     private void loadDropdownData() {
+        cmbMaterial.removeAllItems();
+        cmbCleaner.removeAllItems();
+
         try (java.sql.Connection conn = za.co.bc.inventory.database.DBConnection.getConnection()) {
-            
-            String matQuery = "SELECT material_id, name, quantity_available FROM Materials WHERE quantity_available > 0";
+            if (conn == null) {
+                throw new java.sql.SQLException("Could not connect to the database.");
+            }
+
+            String matQuery = "SELECT id, name, quantity FROM material WHERE quantity > 0 ORDER BY name";
             try (java.sql.PreparedStatement stmt = conn.prepareStatement(matQuery);
                  java.sql.ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    cmbMaterial.addItem(rs.getInt("material_id") + " - " + rs.getString("name") + " (Avail: " + rs.getInt("quantity_available") + ")");
+                    cmbMaterial.addItem(rs.getInt("id") + " - " + rs.getString("name")
+                            + " (Avail: " + rs.getInt("quantity") + ")");
                 }
             }
 
-            String clnQuery = "SELECT cleaner_id, first_name, last_name FROM Cleaners";
+            String clnQuery = "SELECT id, full_name FROM cleaners ORDER BY full_name";
             try (java.sql.PreparedStatement stmt = conn.prepareStatement(clnQuery);
                  java.sql.ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    cmbCleaner.addItem(rs.getInt("cleaner_id") + " - " + rs.getString("first_name") + " " + rs.getString("last_name"));
+                    cmbCleaner.addItem(rs.getInt("id") + " - " + rs.getString("full_name"));
                 }
             }
-            
+
         } catch (java.sql.SQLException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Database Error: " + e.getMessage(), "Error Loading Data", javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Database Error: " + e.getMessage(),
+                    "Error Loading Data",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -63,7 +73,7 @@ public class StockIssueForm extends javax.swing.JFrame {
         btnCancel = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         cmbMaterial.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -151,13 +161,11 @@ public class StockIssueForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIssueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIssueActionPerformed
-     dispose();
-    }//GEN-LAST:event_btnIssueActionPerformed
-
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-
         if (cmbMaterial.getSelectedItem() == null || cmbCleaner.getSelectedItem() == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Please select both a material and a cleaner.", "Validation Error", javax.swing.JOptionPane.WARNING_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Please select both a material and a cleaner.",
+                    "Validation Error",
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
             return;
         }
 
@@ -171,19 +179,26 @@ public class StockIssueForm extends javax.swing.JFrame {
             int qty = Integer.parseInt(txtQuantity.getText().trim());
 
             za.co.bc.inventory.service.StockIssueService service = new za.co.bc.inventory.service.StockIssueService();
-            
-            String result = service.processIssuance(matId, clnId, qty, 1); 
+            String result = service.processIssuance(matId, clnId, qty, 1);
 
             if (result.startsWith("Success")) {
                 javax.swing.JOptionPane.showMessageDialog(this, result, "Success", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                dispose();
+                loadDropdownData();
+                txtQuantity.setText("");
             } else {
                 javax.swing.JOptionPane.showMessageDialog(this, result, "Transaction Failed", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
 
         } catch (NumberFormatException ex) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Please enter a valid whole number for the quantity.", "Input Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Please enter a valid whole number for the quantity.",
+                    "Input Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
         }
+    }//GEN-LAST:event_btnIssueActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        dispose();
     }//GEN-LAST:event_btnCancelActionPerformed
 
     /**

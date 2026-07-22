@@ -1,173 +1,127 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package za.co.bc.inventory.view;
 
-/**
- *
- * @author Jt
- */
-public class StorekeeperDashboard extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(StorekeeperDashboard.class.getName());
+import za.co.bc.inventory.dao.ReportDAO;
 
-    /**
-     * Creates new form StorekeeperDashboard
-     */
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+/**
+ * Main dashboard for storekeepers.
+ * Provides navigation to day-to-day inventory management modules.
+ */
+public class StorekeeperDashboard extends JFrame {
+
+    private final ReportDAO reportDAO = new ReportDAO();
+
+    private JLabel lblTotalMaterials;
+    private JLabel lblTotalCleaners;
+    private JLabel lblLowStock;
+    private JTable tblRecentIssuances;
+
     public StorekeeperDashboard() {
-        initComponents();
+        initialiseWindow();
+        buildInterface();
         loadDashboardData();
     }
 
+    private void initialiseWindow() {
+        setTitle("Storekeeper Dashboard");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(900, 600);
+        setMinimumSize(new Dimension(800, 520));
+        setLocationRelativeTo(null);
+    }
+
+    private void buildInterface() {
+        setLayout(new BorderLayout(12, 12));
+
+        JLabel title = new JLabel("Storekeeper Dashboard", SwingConstants.CENTER);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        title.setBorder(BorderFactory.createEmptyBorder(12, 10, 0, 10));
+        add(title, BorderLayout.NORTH);
+
+        JPanel navigation = new JPanel(new GridLayout(0, 1, 8, 8));
+        navigation.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 5));
+
+        JButton btnMaterials = new JButton("Manage Materials");
+        JButton btnSuppliers = new JButton("Manage Suppliers");
+        JButton btnCleaners = new JButton("Manage Cleaners");
+        JButton btnStockIssuance = new JButton("Stock Issuance");
+        JButton btnRefresh = new JButton("Refresh Dashboard");
+        JButton btnLogout = new JButton("Log Out");
+
+        navigation.add(btnMaterials);
+        navigation.add(btnSuppliers);
+        navigation.add(btnCleaners);
+        navigation.add(btnStockIssuance);
+        navigation.add(btnRefresh);
+        navigation.add(btnLogout);
+        add(navigation, BorderLayout.WEST);
+
+        JPanel content = new JPanel(new BorderLayout(10, 10));
+        content.setBorder(BorderFactory.createEmptyBorder(15, 5, 15, 15));
+
+        JPanel stats = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 5));
+        lblTotalMaterials = new JLabel("Total Materials: 0");
+        lblTotalCleaners = new JLabel("Total Cleaners: 0");
+        lblLowStock = new JLabel("Low Stock: 0");
+        stats.add(lblTotalMaterials);
+        stats.add(lblTotalCleaners);
+        stats.add(lblLowStock);
+        content.add(stats, BorderLayout.NORTH);
+
+        tblRecentIssuances = new JTable();
+        tblRecentIssuances.setFillsViewportHeight(true);
+        content.add(new JScrollPane(tblRecentIssuances), BorderLayout.CENTER);
+
+        add(content, BorderLayout.CENTER);
+
+        btnMaterials.addActionListener(e -> openChildWindow(new MaterialForm()));
+        btnSuppliers.addActionListener(e -> openChildWindow(new SupplierForm()));
+        btnCleaners.addActionListener(e -> openChildWindow(new CleanerForm()));
+        btnStockIssuance.addActionListener(e -> openChildWindow(new StockIssueForm()));
+        btnRefresh.addActionListener(e -> loadDashboardData());
+        btnLogout.addActionListener(e -> logout());
+    }
+
+    private void openChildWindow(JFrame form) {
+        form.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        form.setLocationRelativeTo(this);
+        form.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                loadDashboardData();
+            }
+        });
+        form.setVisible(true);
+    }
+
     private void loadDashboardData() {
-        za.co.bc.inventory.dao.ReportDAO reportDAO = new za.co.bc.inventory.dao.ReportDAO();
-        
-        lblTotalMaterials.setText("TotalMaterials: " + reportDAO.getTotalCount("Materials"));
-        lblTotalCleaners.setText("TotalCleaners: " + reportDAO.getTotalCount("Cleaners"));
-        lblLowStock.setText("LowStock: " + reportDAO.getLowStockItemsCount());
-        
-        jTable1.setModel(reportDAO.getRecentIssuancesModel());
+        lblTotalMaterials.setText("Total Materials: " + reportDAO.getTotalMaterialsCount());
+        lblTotalCleaners.setText("Total Cleaners: " + reportDAO.getTotalCleanersCount());
+        lblLowStock.setText("Low Stock: " + reportDAO.getLowStockItemsCount());
+        tblRecentIssuances.setModel(reportDAO.getRecentIssuancesModel());
     }
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
-        lblTotalMaterials = new javax.swing.JLabel();
-        lblTotalCleaners = new javax.swing.JLabel();
-        lblLowStock = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        btnIssueStock = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        jLabel1.setText("Storekeeper Dashboard");
-
-        lblTotalMaterials.setText("TotalMaterials");
-
-        lblTotalCleaners.setText("TotalCleaners");
-
-        lblLowStock.setText("LowStock");
-
-        jButton1.setText("Log Out");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
-
-        btnIssueStock.setText("Issue Stock");
-        btnIssueStock.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnIssueStockActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(lblTotalMaterials, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(lblTotalCleaners, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(lblLowStock, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(btnIssueStock)))
-                .addContainerGap(32, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(150, 150, 150))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTotalMaterials)
-                    .addComponent(lblTotalCleaners, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblLowStock, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnIssueStock)
-                .addGap(12, 12, 12)
-                .addComponent(jButton1)
-                .addContainerGap())
+    private void logout() {
+        int choice = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to log out?",
+                "Log Out",
+                JOptionPane.YES_NO_OPTION
         );
 
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void btnIssueStockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIssueStockActionPerformed
-        // TODO add your handling code here:
-        StockIssueForm issueForm = new StockIssueForm();
-        issueForm.setVisible(true);
-        issueForm.setLocationRelativeTo(this);
-    }//GEN-LAST:event_btnIssueStockActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        if (choice == JOptionPane.YES_OPTION) {
+            LoginForm loginForm = new LoginForm();
+            loginForm.setLocationRelativeTo(null);
+            loginForm.setVisible(true);
+            dispose();
         }
-        
-        java.awt.EventQueue.invokeLater(() -> new StorekeeperDashboard().setVisible(true));
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnIssueStock;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JLabel lblLowStock;
-    private javax.swing.JLabel lblTotalCleaners;
-    private javax.swing.JLabel lblTotalMaterials;
-    // End of variables declaration//GEN-END:variables
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new StorekeeperDashboard().setVisible(true));
+    }
 }
