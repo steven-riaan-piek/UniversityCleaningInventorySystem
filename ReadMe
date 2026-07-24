@@ -1,0 +1,34 @@
+Before Running main code please do the following steps to set up the PGAdmin database required for the app to function
+
+Step 1:
+
+Please download and install PostgreSQL software. Below is a link to PostgresSQL websight where you can download the
+software form
+
+Link: https://www.postgresql.org/download/
+
+Step 2:
+
+Once installed please Open op pgAdmin4 and log in to Your preferred Server.
+
+next please Right click on databases and select Create -> Database.
+
+enter cleaning_inventory_db as the databasename.
+
+click the save button
+
+Step 3:
+
+Right click on the newly made database and select Query Tool
+click Open file and Brows for the file Schema.SQL supplied in the zip file under the database folder (src -> main -> java -> database).
+
+Open the file and click the Execute button or press F5
+
+Wait until the "Query returned successfully" appears.
+
+Step 4:
+
+Edit the DBConnecton.java file by entering the User details and password and URL if you have saved it under a different
+name.
+
+
