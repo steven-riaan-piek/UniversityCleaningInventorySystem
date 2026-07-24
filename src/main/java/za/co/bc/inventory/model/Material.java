@@ -7,7 +7,7 @@ public class Material {
     private String description;
     private String category;
     private int quantity;
-    private int unit;
+    private String unit;
     private String suppliers;
     private String status;
 
@@ -15,7 +15,7 @@ public class Material {
     }
 
     public Material(int id, String name, String description,
-                    String category, int quantity, int unit,
+                    String category, int quantity, String unit,
                     String suppliers, String status) {
 
         this.id = id;
@@ -68,11 +68,11 @@ public class Material {
         this.quantity = quantity;
     }
 
-    public int getUnit() {
+    public String getUnit() {
         return unit;
     }
 
-    public void setUnit(int unit) {
+    public void setUnit(String unit) {
         this.unit = unit;
     }
 

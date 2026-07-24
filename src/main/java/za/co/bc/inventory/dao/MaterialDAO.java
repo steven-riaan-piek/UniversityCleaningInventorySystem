@@ -24,7 +24,7 @@ public class MaterialDAO {
         material.setDescription(rs.getString("description"));
         material.setCategory(rs.getString("category"));
         material.setQuantity(rs.getInt("quantity"));
-        material.setUnit(rs.getInt("unit"));
+        material.setUnit(rs.getString("unit"));
         material.setSuppliers(rs.getString("supplier"));
         material.setStatus(rs.getString("status"));
 
@@ -105,7 +105,7 @@ public class MaterialDAO {
             stmt.setString(2, material.getDescription());
             stmt.setString(3, material.getCategory());
             stmt.setInt(4, material.getQuantity());
-            stmt.setInt(5, material.getUnit());
+            stmt.setString(5, material.getUnit());
             stmt.setString(6, material.getSuppliers());
             stmt.setString(7, material.getStatus());
 
@@ -145,7 +145,7 @@ public class MaterialDAO {
             stmt.setString(2, material.getDescription());
             stmt.setString(3, material.getCategory());
             stmt.setInt(4, material.getQuantity());
-            stmt.setInt(5, material.getUnit());
+            stmt.setString(5, material.getUnit());
             stmt.setString(6, material.getSuppliers());
             stmt.setString(7, material.getStatus());
             stmt.setInt(8, material.getId());
